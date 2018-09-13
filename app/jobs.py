@@ -7,7 +7,7 @@ def job1(a, b):
 
 def job2():
     print("it will run job2")
-    url = "http://ultrasound.lonshinetech.cn/lscloud/api/PictureDoctor/testint"
+    url = "xxx"
     para = {'scantime':'1536741519'}
     ret = http_post(url, para)
     print('job2 %s ' % ret)
