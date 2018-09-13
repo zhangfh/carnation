@@ -4,6 +4,8 @@ from app import create_app, db
 from app.models import APScheduleJob
 from flask_script import Manager,Shell
 from flask_migrate import Migrate, MigrateCommand
+import log
+import logging
 
 #app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 app = create_app(os.getenv('FLASK_CONFIG') or 'job')
@@ -25,6 +27,8 @@ def test():
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 if __name__ == '__main__':
+    log.init_log('./log/logging.txt')
+    logging.info('logging starts')
     #app.run(debug=True,host='0.0.0.0')
     manager.run()
 
