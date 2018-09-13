@@ -13,6 +13,7 @@
    (venv)#pip install flask-mail
    (venv)#pip install mysql-python
    (venv)#pip install Flask-APScheduler
+   (venv)#pip install gunicorn (production)
 
 
 3. database: carnation
@@ -198,3 +199,7 @@ timezone (datetime.tzinfo|str) – time zone to use for the date/time calculatio
 
 24. Once add a job, the same job cannot be add again.
 
+25. gunicorn
+    gunicorn -b 0.0.0.0:5000 manage:app 
+    log:
+    gunicorn -b 0.0.0.0:5000 manage:app --access-logfile ./log/log.txt
