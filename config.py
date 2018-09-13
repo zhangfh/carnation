@@ -42,7 +42,7 @@ class JobConfig(Config):
     JOBS = [
         {
             'id': 'job1',
-            'func': 'jobs:job1',
+            'func': 'app.jobs:job1',
             'args': (1, 2),
             'trigger': 'interval',
             'seconds': 10

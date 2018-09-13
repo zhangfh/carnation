@@ -1,5 +1,5 @@
 import logging
-from utils import http_post
+from .utils import http_post
 logging.basicConfig()
 
 def job1(a, b):

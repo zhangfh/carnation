@@ -107,3 +107,29 @@
     please note : 1) import position
                   2) with context
  
+14. move code structure
+    .
+    ├── app
+    │   ├── events.py
+    │   ├── __init__.py
+    │   ├── jobs.py
+    │   ├── main
+    │   │   ├── errors.py
+    │   │   ├── __init__.py
+    │   │   └── views.py
+    │   ├── models.py
+    │   ├── templates
+    │   │   ├── 404.html
+    │   │   ├── 500.html
+    │   │   ├── base.html
+    │   │   └── index.html
+    │   └── utils.py
+    ├── config.py
+    ├── manage.py
+    └── README.md
+    jobs, events, utils are placed under app directory
+
+    jobs be used by app. , for example:        
+    'func': 'app.jobs:job1',
+    add new job:
+    {"id":"job2","func":"app.jobs:job1","name":"job2","args": [202, 303]} 
