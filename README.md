@@ -168,3 +168,5 @@
 	last		day	Fire on the last day within the month
 	x,y,z		any	Fire on any matching expression; can combine any number of any of the above expressions
 19. Flask-AQScheduler auth
+20. Requirement
+    pip freeze > requirements.txt
