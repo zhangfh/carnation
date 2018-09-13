@@ -40,15 +40,15 @@ class ProductionConfig(Config):
 
 class JobConfig(Config):
     JOB = True
-    JOBS = [
-        {
-            'id': 'job1',
-            'func': 'app.jobs:job1',
-            'args': (1, 2),
-            'trigger': 'interval',
-            'seconds': 10
-        }
-    ]
+#    JOBS = [
+#        {
+#            'id': 'job1',
+#            'func': 'app.jobs:job1',
+#            'args': (1, 2),
+#            'trigger': 'interval',
+#            'seconds': 10
+#        }
+#    ]
     #SCHEDULER_JOBSTORES = {
     #    'default': SQLAlchemyJobStore(url=Config.SQLALCHEMY_DATABASE_URI)
     #}

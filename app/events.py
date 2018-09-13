@@ -1,4 +1,5 @@
 from .models import APScheduleJob
+from .models import User
 from . import scheduler
 from . import db
 from apscheduler.events import *
@@ -27,7 +28,11 @@ def save_events(events):
             job = APScheduleJob(jobid=events.job_id, jobruntimes = 0, jobname=events.job_id)
             job.add_run_time()
             db.session.add(job)
+            #test user
+            user = User(username='john',password='cat')
+            db.session.add(user)
             db.session.commit()
+
         else:
             #print("job exist, update")
             job.add_run_time()

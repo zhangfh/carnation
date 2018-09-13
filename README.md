@@ -170,3 +170,9 @@
 19. Flask-AQScheduler auth
 20. Requirement
     pip freeze > requirements.txt
+21. disable job in config.py
+22. table is exist, how to use it:
+    1)create user table
+    mysql>>>create table user(id int(12) not null auto_increment, username varchar(50) default null, password varchar(50) not null, primary key(id);
+    2)create user model 
+    3) use it events.py
