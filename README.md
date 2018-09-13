@@ -196,3 +196,5 @@ timezone (datetime.tzinfo|str) – time zone to use for the date/time calculatio
     2) log.py
     3) using logging
 
+24. Once add a job, the same job cannot be add again.
+
