@@ -133,3 +133,38 @@
     'func': 'app.jobs:job1',
     add new job:
     {"id":"job2","func":"app.jobs:job1","name":"job2","args": [202, 303]} 
+15. app/utils get_hostname()
+16. config host allowed
+17. config max instance
+18. cron
+    add job, post data to http://192.168.0.107:5000/scheduler/jobs
+    {
+	"id":"job3",
+	"func":"app.jobs:job1",
+	"name":"job3",
+	"second": "*/10", 
+	"hour": "*",
+	"trigger":"cron",
+	"args": [702, 603]
+    }
+    parameters:
+
+        'year'
+        'month'
+        'week'
+        'day'
+        'day_of_week'
+        'hour'
+        'minute'
+        'second'
+     Cron rules:
+	Expression	Field	Description
+	*		any	Fire on every value
+	*/a		any	Fire every a values, starting from the minimum
+	a-b		any	Fire on any value within the a-b range (a must be smaller than b)
+	a-b/c		any	Fire every c values within the a-b range
+	xth y		day	Fire on the x -th occurrence of weekday y within the month
+	last x		day	Fire on the last occurrence of weekday x within the month
+	last		day	Fire on the last day within the month
+	x,y,z		any	Fire on any matching expression; can combine any number of any of the above expressions
+19. Flask-AQScheduler auth

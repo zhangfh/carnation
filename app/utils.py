@@ -1,5 +1,6 @@
 import urllib,cookielib
 import urllib2
+import socket
 
 def http_post(url, para):
     headers={'UserAgent':'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)','X-API-KEY':'lscloud'};
@@ -12,4 +13,7 @@ def http_post(url, para):
     print('http_post %s ' % ret)
     return ret
 
+
+def get_hostname():
+    return socket.gethostname().lower()
 

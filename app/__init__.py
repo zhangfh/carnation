@@ -14,6 +14,7 @@ from flask import current_app
 #from .models import APScheduleJob #compile error
 
 from apscheduler.events import *
+from flask_apscheduler.auth import HTTPBasicAuth
 
 
 #EVENT_JOB_ADDED = 128
@@ -51,6 +52,10 @@ def create_app(config_name):
     scheduler.init_app(app)
     scheduler.add_listener(event_listener, LISTENER_JOB)
     scheduler.start()
+
+#    @scheduler.authenticate
+#    def authenticate(auth):
+#        return auth['username'] == 'guest' and auth['password'] == 'guest'
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

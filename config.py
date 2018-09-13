@@ -1,4 +1,5 @@
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from flask_apscheduler.auth import HTTPBasicAuth
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -51,7 +52,13 @@ class JobConfig(Config):
     #SCHEDULER_JOBSTORES = {
     #    'default': SQLAlchemyJobStore(url=Config.SQLALCHEMY_DATABASE_URI)
     #}
+    #SCHEDULER_ALLOWED_HOSTS = ['zhangfanghui-virtualbox'] #I don't How to use it
+    #SCHEDULER_JOB_DEFAULTS = {
+    #    'coalesce': False,
+    #    'max_instances': 3
+    #}
     SCHEDULER_API_ENABLED = True
+    #SCHEDULER_AUTH = HTTPBasicAuth()
 
 config = {
     'development' : DevelopmentConfig,
