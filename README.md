@@ -90,4 +90,20 @@
     }
     default, APScheduler use memory to store job, use database to store job, it only store running job, and if flask restart, it will show error: apscheduler.jobstores.base.ConflictingIdError: u'Job identifier (job1) conflicts with an existing job', I must clean table using next command: truncate table apscheduler_jobs;
 
+11. create table
+   1)create table and model APScheduleJob
+   2)use model in manage.db
+   3) python manage.py db init
+      python manage.py db migrate -m "init"
+      python manage.py db upgrade
+      it cannot create database now.
+      #python manage.py  shell
+      >>> db.create_all()        #after this command, table 'jobs' is created
 
+12. add listener for APScheduler
+    scheduler.add_listener(event_listener, LISTENER_JOB)
+    
+13. save event to jobs table
+    please note : 1) import position
+                  2) with context
+ 
