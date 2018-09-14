@@ -1,9 +1,10 @@
 # carnation 康乃馨 
-# 
-1. install virtual env 
+# 目的：使用flask和APScheduler 
+1. 准备环境：
+   install virtual env 
    #virtualenv venv
    #source  venv/bin/activate
-2. install package
+2. 准备python package
    (venv)#pip install flask
    (venv)#pip install flask-script
    (venv)#pip install flask-bootstrap
@@ -14,43 +15,43 @@
    (venv)#pip install mysql-python
    (venv)#pip install Flask-APScheduler
    (venv)#pip install gunicorn (production)
-
-
-3. database: carnation
+3. 准备数据库: carnation
+   为保密， add mysql password in activate script
    CREATE DATABASE IF NOT EXISTS carnation DEFAULT CHARSET utf8 COLLATE utf8_general_ci
-
 
 4. structure
    #tree -I 'venv|migrations|*.pyc'
-   .
-   ├── app
-   │   ├── __init__.py
-   │   ├── main
-   │   │   ├── errors.py
-   │   │   ├── __init__.py
-   │   │   └── views.py
-   │   └── templates
-   │       ├── 404.html
-   │       ├── 500.html
-   │       ├── base.html
-   │       └── index.html
-   ├── config.py
-   ├── jobs.py
-   ├── manage.py
-   └── README.md
+    .
+    ├── app
+    │   ├── events.py 接收APScheduler事件
+    │   ├── __init__.py
+    │   ├── jobs.py 所有job放置在这里
+    │   ├── main
+    │   │   ├── errors.py
+    │   │   ├── __init__.py
+    │   │   └── views.py
+    │   ├── models.py
+    │   ├── templates
+    │   │   ├── 404.html
+    │   │   ├── 500.html
+    │   │   ├── base.html
+    │   │   └── index.html
+    │   └── utils.py
+    ├── config.py
+    ├── manage.py
+    └── README.md
 
 5. run
-   #python manage.py runserver -h 0.0.0.0
+   #python manage.py runserver -h 0.0.0.0 -d
 
-6. apscheduler use
-   1). define job config in config.py
-   2). init and start in app/__init__.py
-   3). after flask run, test job will print at terminal and scheduler api can be use
-   4). api
+6. 使用APScheduler
+   1). config.py文件中定义JobConfig类
+   2). app/__init__.py中定义scheduler
+   4). Flask-APScheduler缺省提供api
            address                                method     return value
-    http://192.168.0.107:5000/scheduler            get        
+    http://192.168.0.107:5000/scheduler            get        返回信息 
 	 {"current_host": "virtualbox", "allowed_hosts": ["*"], "running": true}
-    http://192.168.0.107:5000/scheduler/jobs       get
+    http://192.168.0.107:5000/scheduler/jobs       get        返回所有正在运行的job
     [
 	  {
 	    "id": "job1", 
@@ -66,78 +67,49 @@
 		"next_run_time": "2018-09-12T15:37:44.647100+08:00"
 	  }
    ]
-   //it show all jobs that are running, not include the finished job. 
-   http://192.168.0.107:5000/scheduler/jobs/<job_id>  get 
-   http://192.168.0.107:5000/scheduler/jobs  post(add job)
-   {"id":"job2","func":"jobs:job1","name":"job2","args": [202, 303]}      // this job only be runned once.
-   {"id":"job3","func":"jobs:job1","name":"job3","trigger":"interval","args": [802, 903]} //this job be runned every one second
-   {"id":"job3","func":"jobs:job1","name":"job3","seconds": 10, "trigger":"interval","args": [802, 903]} //this job be runned every ten seconds
-   http://192.168.0.107:5000/scheduler/jobs/job3 delete(remove job) return 204
+   http://192.168.0.107:5000/scheduler/jobs/<job_id>  get      返回某一特定job信息 
+   http://192.168.0.107:5000/scheduler/jobs           post     增加job
+   {"id":"job2","func":"app.jobs:job1","name":"job2","args": [202, 303]}      // 缺省trigger为date，只执行一次
+   {"id":"job3","func":"app.jobs:job1","name":"job3","trigger":"interval","args": [802, 903]} //this job be runned every one second 没有seconds，缺省1秒
+   {"id":"job3","func":"app.jobs:job1","name":"job3","seconds": 10, "trigger":"interval","args": [802, 903]} //this job be runned every ten seconds
+   http://192.168.0.107:5000/scheduler/jobs/job3      delete   移除job，返回204
+   {"id":"job2","func":"app.jobs:job6","name":"job2","args": [202, 303]} job6并不存在，所以返回消息：
+   {"error_message": "Error resolving reference app.jobs:job6: error looking up object"}
 
 7. http post
-   1) utils.py
-   2) define job2 in jobs.py, when send message to http://192.168.0.107:5000/scheduler/jobs, {"id":"job2","func":"jobs:job2","name":"job2"}. it only be excuted once.
-
+   see utils.py , 实现了http调用
     
-8. error:
-   log:No handlers could be found for logger "apscheduler.executors.default"
-   fix:import logging
-       logging.basicConfig()
+8. 问题描述:
+   1)log:No handlers could be found for logger "apscheduler.executors.default"
+     resolve:import logging
+             logging.basicConfig()
 
-9. add mysql password in activate script
-10. use database to store job
+9. APScheduler 使用数据库存储job
     SCHEDULER_JOBSTORES = {
         'default': SQLAlchemyJobStore(url=Config.SQLALCHEMY_DATABASE_URI)
     }
     default, APScheduler use memory to store job, use database to store job, it only store running job, and if flask restart, it will show error: apscheduler.jobstores.base.ConflictingIdError: u'Job identifier (job1) conflicts with an existing job', I must clean table using next command: truncate table apscheduler_jobs;
 
-11. create table
-   1)create table and model APScheduleJob
-   2)use model in manage.db
-   3) python manage.py db init
+10. flask 使用数据库
+   1)创建table jobs和 model APScheduleJob
+   2) python manage.py db init
       python manage.py db migrate -m "init"
       python manage.py db upgrade
       it cannot create database now.
       #python manage.py  shell
       >>> db.create_all()        #after this command, table 'jobs' is created
 
-12. add listener for APScheduler
+11. add listener for APScheduler
     scheduler.add_listener(event_listener, LISTENER_JOB)
     
-13. save event to jobs table
+12. save event to jobs table
     please note : 1) import position
                   2) with context
  
-14. move code structure
-    .
-    ├── app
-    │   ├── events.py
-    │   ├── __init__.py
-    │   ├── jobs.py
-    │   ├── main
-    │   │   ├── errors.py
-    │   │   ├── __init__.py
-    │   │   └── views.py
-    │   ├── models.py
-    │   ├── templates
-    │   │   ├── 404.html
-    │   │   ├── 500.html
-    │   │   ├── base.html
-    │   │   └── index.html
-    │   └── utils.py
-    ├── config.py
-    ├── manage.py
-    └── README.md
-    jobs, events, utils are placed under app directory
-
-    jobs be used by app. , for example:        
-    'func': 'app.jobs:job1',
-    add new job:
-    {"id":"job2","func":"app.jobs:job1","name":"job2","args": [202, 303]} 
-15. app/utils get_hostname()
-16. config host allowed
-17. config max instance
-18. cron
+13. app/utils get_hostname()
+14. Flask-APScheduler 支持host allowed
+15. Flask-APScheduler 支持max instance
+16. APScheduler cron
     add job, post data to http://192.168.0.107:5000/scheduler/jobs
     {
 	"id":"job3",
@@ -149,7 +121,6 @@
 	"args": [702, 603]
     }
     parameters:
-
         'year'
         'month'
         'week'
@@ -183,23 +154,25 @@
 	start_date (datetime|str) – earliest possible date/time to trigger on (inclusive) - （表示开始时间）
 	end_date (datetime|str) – latest possible date/time to trigger on (inclusive) - （表示结束时间）
 timezone (datetime.tzinfo|str) – time zone to use for the date/time calculations (defaults to scheduler timezone) -（表示时区取值）
-19. Flask-AQScheduler auth
-20. Requirement
+
+17. Flask-AQScheduler 支持auth
+18. Requirement
     pip freeze > requirements.txt
-21. disable job in config.py
-22. table is exist, how to use it:
+19. 假设表已存在, how to use it:
     1)create user table
     mysql>>>create table user(id int(12) not null auto_increment, username varchar(50) default null, password varchar(50) not null, primary key(id);
     2)create user model 
     3) use it events.py
-23. use log
+20. use log
     1) mkdir log directory
     2) log.py
     3) using logging
 
-24. Once add a job, the same job cannot be add again.
+21. 一旦增加一个job，同id的job不可以再次增加
 
-25. gunicorn
+22. gunicorn 生产环境
     gunicorn -b 0.0.0.0:5000 manage:app 
     log:
     gunicorn -b 0.0.0.0:5000 manage:app --access-logfile ./log/log.txt
+23. flask api
+    http://192.168.0.107:5000/api/v1.0/posts/?page=10 
