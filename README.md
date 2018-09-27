@@ -176,3 +176,7 @@ timezone (datetime.tzinfo|str) – time zone to use for the date/time calculatio
     gunicorn -b 0.0.0.0:5000 manage:app --access-logfile ./log/log.txt
 23. flask api
     http://192.168.0.107:5000/api/v1.0/posts/?page=10 
+24. excel
+    pip install xlwt
+    app/excel.py
+25. pyserial
